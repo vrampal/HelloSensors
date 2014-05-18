@@ -1,4 +1,4 @@
-package com.sensors.hello;
+package vrampal.hellosensors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,17 +19,22 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnItemSelectedListener, SensorEventListener {
 
+  // Fixed rate or use SensorManager.SENSOR_DELAY_UI
+  private static final int SENSOR_RATE = 200 * 1000; // 200ms = 5 Hz
+
   // ----- Sensor business objects -----
 
   private SensorManager sensorManager;
 
   private List<Sensor> sensorList;
 
+  private String unit = "";
+
   // ----- UI Elements -----
 
   private Spinner spinner;
 
-  private TextView value0, value1, value2, accuracy;
+  private TextView timestamp, valueX, valueY, valueZ, accuracy;
 
   private TextView sensorName, sensorMaximumRange, sensorPower, sensorResolution, sensorVendor, sensorVersion;
 
@@ -46,10 +51,13 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
     // Get UI elements
     spinner = (Spinner) findViewById(R.id.spinner);
-    value0 = (TextView) findViewById(R.id.value0);
-    value1 = (TextView) findViewById(R.id.value1);
-    value2 = (TextView) findViewById(R.id.value2);
+
+    timestamp = (TextView) findViewById(R.id.timestamp);
+    valueX = (TextView) findViewById(R.id.valueX);
+    valueY = (TextView) findViewById(R.id.valueY);
+    valueZ = (TextView) findViewById(R.id.valueZ);
     accuracy = (TextView) findViewById(R.id.accuracy);
+
     sensorName = (TextView) findViewById(R.id.name);
     sensorMaximumRange = (TextView) findViewById(R.id.rangeMax);
     sensorPower = (TextView) findViewById(R.id.power);
@@ -102,7 +110,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
     sensorVendor.setText("Vendor: " + sensor.getVendor());
     sensorVersion.setText("Version: " + sensor.getVersion());
 
-    sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
+    unit = SensorType.getByType(sensor.getType()).getUnit();
+
+    sensorManager.registerListener(this, sensor, SENSOR_RATE);
   }
 
   private void disableListener() {
@@ -113,9 +123,10 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
   @Override
   public void onSensorChanged(SensorEvent event) {
-    value0.setText(String.format("value[0]: %f", event.values[0]));
-    value1.setText(String.format("value[1]: %f", event.values[1]));
-    value2.setText(String.format("value[2]: %f", event.values[2]));
+    timestamp.setText(String.format("timestamp: %d", event.timestamp));
+    valueX.setText(String.format("valueX: %+7.5f %s", event.values[0], unit));
+    valueY.setText(String.format("valueY: %+7.5f %s", event.values[1], unit));
+    valueZ.setText(String.format("valueZ: %+7.5f %s", event.values[2], unit));
     accuracy.setText(String.format("Accuracy: %d", event.accuracy));
   }
 

@@ -15,18 +15,23 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/value0"
+        android:id="@+id/timestamp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp" />
 
     <TextView
-        android:id="@+id/value1"
+        android:id="@+id/valueX"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/value2"
+        android:id="@+id/valueY"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/valueZ"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
