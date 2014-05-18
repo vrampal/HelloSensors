@@ -28,6 +28,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
   private List<Sensor> sensorList;
 
+  private Sensor sensor;
+
   private String unit = "";
 
   // ----- UI Elements -----
@@ -81,8 +83,14 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
   @Override
   protected void onPause() {
-    disableListener();
     super.onPause();
+    disableListener();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    enableListener();
   }
 
   // ----- OnItemSelectedListener API -----
@@ -91,6 +99,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
   public void onItemSelected(AdapterView<?> adapter, View view, int index, long id) {
     disableListener();
     selectSensor(index);
+    enableListener();
   }
 
   @Override
@@ -101,7 +110,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
   // ----- Business methods used by UI -----
 
   private void selectSensor(int index) {
-    Sensor sensor = sensorList.get(index);
+    sensor = sensorList.get(index);
 
     sensorName.setText(sensor.getName());
     sensorMaximumRange.setText("Max range: " + sensor.getMaximumRange());
@@ -110,8 +119,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
     sensorVendor.setText("Vendor: " + sensor.getVendor());
     sensorVersion.setText("Version: " + sensor.getVersion());
 
-    unit = SensorType.getByType(sensor.getType()).getUnit();
+    int typeInt = sensor.getType();
+    unit = SensorType.getByType(typeInt).getUnit();
+  }
 
+  private void enableListener() {
     sensorManager.registerListener(this, sensor, SENSOR_RATE);
   }
 
