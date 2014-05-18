@@ -30,13 +30,15 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
   private Sensor sensor;
 
+  private long prevTimestamp;
+
   private String unit = "";
 
   // ----- UI Elements -----
 
   private Spinner spinner;
 
-  private TextView timestamp, valueX, valueY, valueZ, accuracy;
+  private TextView timestamp, deltaT, valueX, valueY, valueZ, accuracy;
 
   private TextView sensorName, sensorMaximumRange, sensorPower, sensorResolution, sensorVendor, sensorVersion;
 
@@ -55,6 +57,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
     spinner = (Spinner) findViewById(R.id.spinner);
 
     timestamp = (TextView) findViewById(R.id.timestamp);
+    deltaT = (TextView) findViewById(R.id.deltaT);
     valueX = (TextView) findViewById(R.id.valueX);
     valueY = (TextView) findViewById(R.id.valueY);
     valueZ = (TextView) findViewById(R.id.valueZ);
@@ -135,7 +138,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
   @Override
   public void onSensorChanged(SensorEvent event) {
-    timestamp.setText(String.format("timestamp: %d", event.timestamp));
+    long dT = event.timestamp - prevTimestamp;
+    prevTimestamp = event.timestamp;
+
+    timestamp.setText(String.format("timestamp: %d us", event.timestamp / 1000));
+    deltaT.setText(String.format("deltaT: %d us", dT / 1000));
     valueX.setText(String.format("valueX: %+7.5f %s", event.values[0], unit));
     valueY.setText(String.format("valueY: %+7.5f %s", event.values[1], unit));
     valueZ.setText(String.format("valueZ: %+7.5f %s", event.values[2], unit));
