@@ -11,10 +11,52 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/vendor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/minDelay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/resolution"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/maxRange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/power"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:id="@+id/timestamp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/deltaT"
@@ -37,38 +79,12 @@
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/accuracy"
+        android:id="@+id/value3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
-
-    <TextView
-        android:id="@+id/rangeMax"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/power"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/resolution"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/vendor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/version"
+        android:id="@+id/value4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -19,8 +19,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnItemSelectedListener, SensorEventListener {
 
-  // Fixed rate or use SensorManager.SENSOR_DELAY_UI
-  private static final int SENSOR_RATE = 200 * 1000; // 200ms = 5 Hz
+  private static final int SENSOR_DELAY = SensorManager.SENSOR_DELAY_UI;
 
   // ----- Sensor business objects -----
 
@@ -30,17 +29,19 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
   private Sensor sensor;
 
-  private long prevTimestamp;
+  private SensorType type;
 
-  private String unit = "";
+  private long prevTimestamp;
 
   // ----- UI Elements -----
 
   private Spinner spinner;
 
-  private TextView timestamp, deltaT, valueX, valueY, valueZ, accuracy;
+  private TextView sensorName, sensorType, sensorVendor, sensorVersion;
 
-  private TextView sensorName, sensorMaximumRange, sensorPower, sensorResolution, sensorVendor, sensorVersion;
+  private TextView sensorMinDelay, sensorResolution, sensorMaxRange, sensorPower;
+
+  private TextView timestamp, deltaT, valueX, valueY, valueZ, value3, value4;
 
   // ----- Activity UI API -----
 
@@ -56,19 +57,23 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
     // Get UI elements
     spinner = (Spinner) findViewById(R.id.spinner);
 
+    sensorName = (TextView) findViewById(R.id.name);
+    sensorType = (TextView) findViewById(R.id.type);
+    sensorVendor = (TextView) findViewById(R.id.vendor);
+    sensorVersion = (TextView) findViewById(R.id.version);
+
+    sensorMinDelay = (TextView) findViewById(R.id.minDelay);
+    sensorResolution = (TextView) findViewById(R.id.resolution);
+    sensorMaxRange = (TextView) findViewById(R.id.maxRange);
+    sensorPower = (TextView) findViewById(R.id.power);
+
     timestamp = (TextView) findViewById(R.id.timestamp);
     deltaT = (TextView) findViewById(R.id.deltaT);
     valueX = (TextView) findViewById(R.id.valueX);
     valueY = (TextView) findViewById(R.id.valueY);
     valueZ = (TextView) findViewById(R.id.valueZ);
-    accuracy = (TextView) findViewById(R.id.accuracy);
-
-    sensorName = (TextView) findViewById(R.id.name);
-    sensorMaximumRange = (TextView) findViewById(R.id.rangeMax);
-    sensorPower = (TextView) findViewById(R.id.power);
-    sensorResolution = (TextView) findViewById(R.id.resolution);
-    sensorVendor = (TextView) findViewById(R.id.vendor);
-    sensorVersion = (TextView) findViewById(R.id.version);
+    value3 = (TextView) findViewById(R.id.value3);
+    value4 = (TextView) findViewById(R.id.value4);
 
     // Build the spinner
     List<String> sensorNames = new ArrayList<String>(sensorList.size());
@@ -115,19 +120,25 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
   private void selectSensor(int index) {
     sensor = sensorList.get(index);
 
+    int typeInt = sensor.getType();
+    type = SensorType.valueOf(typeInt);
+    String unit = type.getUnit();
+
     sensorName.setText(sensor.getName());
-    sensorMaximumRange.setText("Max range: " + sensor.getMaximumRange());
-    sensorResolution.setText("Resolution: " + sensor.getResolution());
-    sensorPower.setText("Power: " + sensor.getPower() + "mA");
+    sensorType.setText("Type: " + type.name());
     sensorVendor.setText("Vendor: " + sensor.getVendor());
     sensorVersion.setText("Version: " + sensor.getVersion());
 
-    int typeInt = sensor.getType();
-    unit = SensorType.getByType(typeInt).getUnit();
+    sensorMinDelay.setText(String.format("MinDelay: %d us", sensor.getMinDelay()));
+    sensorResolution.setText(String.format("Resolution: %7.5f %s", sensor.getResolution(), unit));
+    sensorMaxRange.setText(String.format("MaxRange: %7.5f %s", sensor.getMaximumRange(), unit));
+    sensorPower.setText(String.format("Power: %f mA", sensor.getPower()));
   }
 
   private void enableListener() {
-    sensorManager.registerListener(this, sensor, SENSOR_RATE);
+    if (sensor != null) {
+      sensorManager.registerListener(this, sensor, SENSOR_DELAY);
+    }
   }
 
   private void disableListener() {
@@ -138,20 +149,50 @@ public class MainActivity extends Activity implements OnItemSelectedListener, Se
 
   @Override
   public void onSensorChanged(SensorEvent event) {
+    timestamp.setText(String.format("timestamp: %d us", event.timestamp / 1000));
+
     long dT = event.timestamp - prevTimestamp;
     prevTimestamp = event.timestamp;
-
-    timestamp.setText(String.format("timestamp: %d us", event.timestamp / 1000));
     deltaT.setText(String.format("deltaT: %d us", dT / 1000));
-    valueX.setText(String.format("valueX: %+7.5f %s", event.values[0], unit));
-    valueY.setText(String.format("valueY: %+7.5f %s", event.values[1], unit));
-    valueZ.setText(String.format("valueZ: %+7.5f %s", event.values[2], unit));
-    accuracy.setText(String.format("Accuracy: %d", event.accuracy));
+
+    String unit = type.getUnit();
+    String tempText;
+
+    tempText = String.format("valueX: %+7.5f %s", event.values[0], unit);
+    valueX.setText(tempText);
+
+    if (event.values.length >= 2) {
+      tempText = String.format("valueY: %+7.5f %s", event.values[1], unit);
+    } else {
+      tempText = "";
+    }
+    valueY.setText(tempText);
+
+    if (event.values.length >= 3) {
+      tempText = String.format("valueZ: %+7.5f %s", event.values[2], unit);
+    } else {
+      tempText = "";
+    }
+    valueZ.setText(tempText);
+
+    if (event.values.length >= 4) {
+      tempText = String.format("value3: %+7.5f %s", event.values[3], unit);
+    } else {
+      tempText = "";
+    }
+    value3.setText(tempText);
+
+    if (event.values.length >= 5) {
+      tempText = String.format("value4: %+7.5f %s", event.values[4], unit);
+    } else {
+      tempText = "";
+    }
+    value4.setText(tempText);
   }
 
   @Override
   public void onAccuracyChanged(Sensor sensor, int accuracyVal) {
-    accuracy.setText(String.format("Accuracy: %d", accuracyVal));
+    // Nothing to do.
   }
 
 }
